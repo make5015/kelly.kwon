@@ -1,13 +1,27 @@
+import initRembg from './16a06d9fccef7819a504.mjs';
+import * as ort from './vendors-node_modules_onnxruntime-web_dist_esm_ort.mjs';
+import wasmFactory from './03bafc41e28c2f1e46f4.wasm';
 
-import initWasm from './16a06d9fccef7819a504.mjs';
-import onnxruntime from './vendors-node_modules_onnxruntime-web_dist_index_browser_esm_js.mjs';
+let session = null;
 
-async function removeBackgroundFromImage(buffer) {
-  await initWasm();
-  // 초기화 및 세션 생성 코드
-  // 예: const session = await onnxruntime.InferenceSession.create(...);
-  // buffer → Tensor 변환 → 실행 → output → 이미지 반환
-  console.log("Background removal logic goes here.");
+async function loadModel() {
+  const rembg = await initRembg({
+    locateFile(path) {
+      if (path.endsWith('.wasm')) {
+        return './03bafc41e28c2f1e46f4.wasm';
+      }
+      return path;
+    },
+  });
+  session = await rembg.createSession(ort);
 }
 
-window.removeBackground = removeBackgroundFromImage;
+async function removeBackground(buffer) {
+  if (!session) {
+    await loadModel();
+  }
+  return await session.remove(buffer);
+}
+
+// ✅ 전역 등록
+window.removeBackground = removeBackground;
