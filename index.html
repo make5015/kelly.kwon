@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <link rel="icon" href="data:,">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>전자서명용 도장 이미지 배경 제거</title>
@@ -196,9 +197,20 @@
   <button class="download-btn" id="download-btn">결과 이미지 다운로드</button>
 
   <!-- bundle.js는 단독으로 로드 -->
+<!-- 수정 후 -->
 <script src="bundle.js"></script>
 <script>
 
+function waitForRembgReady(callback) {
+    const check = () => {
+      if (typeof window.removeBackground === "function") {
+        callback();
+      } else {
+        setTimeout(check, 100); // 0.1초마다 다시 체크
+      }
+    };
+    check();
+  }
 
     const uploadInput = document.getElementById("uploadInput");
     const uploadBox = document.getElementById("upload-box");
@@ -300,37 +312,40 @@
       handleFiles(e.dataTransfer.files);
     });
 
-    removeBtn.addEventListener("click", async () => {
-      if (!fileData) return alert("먼저 이미지를 선택하세요.");
+    waitForRembgReady(() => {
+  removeBtn.addEventListener("click", async () => {
+    if (!fileData) return alert("먼저 이미지를 선택하세요.");
 
-      removeBtn.disabled = true;
-      removeBtn.textContent = "처리 중...";
+    removeBtn.disabled = true;
+    removeBtn.textContent = "처리 중...";
 
-      const buffer = await fileData.arrayBuffer();
-      const resultBlob = new Blob([await window.removeBackground(buffer)], { type: "image/png" });
-      resultUrl = URL.createObjectURL(resultBlob);
+    const buffer = await fileData.arrayBuffer();
+    const resultBlob = new Blob([await window.removeBackground(buffer)], { type: "image/png" });
+    resultUrl = URL.createObjectURL(resultBlob);
 
-      const tempImg = new Image();
-      tempImg.src = resultUrl;
+    const tempImg = new Image();
+    tempImg.src = resultUrl;
 
-      makeWhiteTransparent(tempImg, (transparentUrl) => {
-        result.src = transparentUrl;
-        result.style.display = "block";
-        downloadBtn.style.display = "block";
+    makeWhiteTransparent(tempImg, (transparentUrl) => {
+      result.src = transparentUrl;
+      result.style.display = "block";
+      downloadBtn.style.display = "block";
 
-        downloadBtn.onclick = () => {
-          const a = document.createElement("a");
-          a.href = transparentUrl;
-          a.download = "background-removed.png";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        };
+      downloadBtn.onclick = () => {
+        const a = document.createElement("a");
+        a.href = transparentUrl;
+        a.download = "background-removed.png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      };
 
-        removeBtn.disabled = false;
-        removeBtn.textContent = "배경 제거하기";
-      });
+      removeBtn.disabled = false;
+      removeBtn.textContent = "배경 제거하기";
     });
+  });
+});
+
 
     clearBtn.addEventListener("click", () => {
       fileData = null;
