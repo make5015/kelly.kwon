@@ -195,7 +195,9 @@
 
   <button class="download-btn" id="download-btn">결과 이미지 다운로드</button>
 
-  <script>
+  <!-- bundle.js는 단독으로 로드 -->
+<script src="bundle.js"></script>
+    <script>
     import { removeBackground } from 'https://esm.sh/modern-rembg';
 
     const uploadInput = document.getElementById("uploadInput");
