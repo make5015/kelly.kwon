@@ -198,7 +198,7 @@
   <!-- bundle.js는 단독으로 로드 -->
 <script src="bundle.js"></script>
     <script>
-    import { removeBackground } from 'https://esm.sh/modern-rembg';
+
 
     const uploadInput = document.getElementById("uploadInput");
     const uploadBox = document.getElementById("upload-box");
@@ -307,7 +307,7 @@
       removeBtn.textContent = "처리 중...";
 
       const buffer = await fileData.arrayBuffer();
-      const resultBlob = new Blob([await removeBackground(buffer)], { type: "image/png" });
+      const resultBlob = new Blob([await window.removeBackground(buffer)], { type: "image/png" });
       resultUrl = URL.createObjectURL(resultBlob);
 
       const tempImg = new Image();
