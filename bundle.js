@@ -1,9 +1,16 @@
 (async () => {
-  const rembg = await (await import('./16a06d9fccef7819a504.mjs')).default({
-    locateFile: path => path.endsWith('.wasm')
-      ? './03bafc41e28c2f1e46f4.wasm'
-      : path
-  });
+  const { createSession } = await import('./16a06d9fccef7819a504.mjs');
+const rembg = {
+  createSession,
+  locateFile: (path) => path.endsWith('.wasm')
+    ? './03bafc41e28c2f1e46f4.wasm'
+    : path
+};
+const session = await createSession({
+  locateFile: rembg.locateFile
+});
+window.removeBackground = buffer => session.remove(buffer);
+
   const session = await rembg.createSession();
   window.removeBackground = buffer => session.remove(buffer);
 })().catch(console.error);
