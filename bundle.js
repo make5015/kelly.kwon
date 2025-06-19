@@ -6,8 +6,6 @@
     }
   });
 
-  const ort = await import('./vendors-node_modules_onnxruntime-web_dist_ort_bundle_min_mjs.bundle.js');
-
-  const session = await rembg.createSession(ort);
+  const session = await rembg.createSession();
   window.removeBackground = async (buffer) => await session.remove(buffer);
 })();
