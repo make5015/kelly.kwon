@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>전자서명용 도장 이미지 배경 제거</title>
+  <style>
+    body {
+      background-color: #f9fafb;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 2rem;
+    }
+
+    .info-box {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-box strong {
+      display: block;
+      font-size: 1rem;
+      color: #111827;
+      margin-bottom: 0.75rem;
+    }
+
+    .info-box p {
+      font-size: 0.875rem;
+      color: #374151;
+      margin: 0.25rem 0;
+    }
+
+    .upload-wrapper {
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+
+    .upload-box {
+      width: 100%;
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      background-color: #fff;
+      padding: 2rem;
+      text-align: center;
+      color: #94a3b8;
+      font-weight: 500;
+      cursor: pointer;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      width: 160px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .action-btn {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #fee2e2;
+      color: #ef4444;
+    }
+
+    .download-btn {
+      display: none;
+      margin: 0 auto 2rem;
+      padding: 0.7rem 1.2rem;
+      font-size: 0.98rem;
+      font-weight: 500;
+      color: #3b82f6;
+      background: #e0e7ff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .image-box {
+      width: 360px;
+      height: 280px;
+      background-color: #f1f5f9;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem auto;
+      color: #1f2937;
+      font-size: 0.95rem;
+      position: relative;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-box .label {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+
+    .image-box img {
+      max-width: 100%;
+      max-height: 180px;
+      object-fit: contain;
+      margin-top: 24px;
+    }
+
+    .image-box.dragover {
+      border: 2px dashed #3b82f6;
+      background: #f1f5f9;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 18px 4vw;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .action-btn, .download-btn {
+        width: 100%;
+      }
+    }
+  </style>
+<script defer src="bundle.js"></script></head>
+<body>
+  <h1>전자서명용 도장 이미지 배경 제거</h1>
+
+  <div class="info-box">
+  <strong>📌 본 기능은 누구에게나 무료로 제공됩니다</strong>
+  <p>🔓 사용자의 접근성과 편의를 높이기 위해 회원가입이나 결제 과정 없이 바로 이용할 수 있도록 설계되었습니다.</p>
+  <p>🗑️ 업로드한 이미지는 저장되지 않으며, 처리 후 즉시 폐기됩니다.</p>
+  <p>✅ 본 도구는 상업적, 비상업적 용도 모두에서 자유롭게 사용할 수 있습니다.</p>
+  <p>💬 기술적인 이점보다는 실질적인 도움이 필요한 분들을 위해 제작되었으며, 널리 활용되기를 바랍니다.</p>
+  <p>✳️ 본 도구는 전자서명(도장)용으로 제작 되었습니다. 도장 외 이미지의 배경 제거 용도로는 적합하지 않은 점 참고 부탁드립니다.</p>
+</div>
+
+
+  <div class="upload-wrapper">
+    <div class="upload-box" id="upload-box">
+      <span id="upload-label">클릭하거나 드래그하여 파일 선택</span>
+    </div>
+    <input type="file" accept="image/*" id="uploadInput" style="display: none;" />
+  </div>
+
+  <div class="button-row">
+    <button class="btn action-btn" id="remove-btn">배경 제거하기</button>
+    <button class="btn delete-btn" id="clear-btn">초기화</button>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div class="image-box" id="before-box">
+      <div class="label">여기에 원본 이미지 (Before)가 표시 됩니다.</div>
+      <img id="preview" src="" style="display: none;" />
+    </div>
+    <div class="image-box" id="after-box">
+      <div class="label">여기에 결과 이미지 (After)가 표시 됩니다.</div>
+      <img id="result" src="" style="display: none;" />
+    </div>
+  </div>
+
+  <button class="download-btn" id="download-btn">결과 이미지 다운로드</button>
+
+</body>
+</html>
